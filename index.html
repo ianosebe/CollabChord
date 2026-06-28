@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CollabChord | Music Collaboration Hub</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="CollabChord is a Spotify-style music collaboration platform where musicians, producers, and audio engineers connect, showcase skills, and find the perfect match for their projects.">
+  <meta name="keywords" content="music collaboration, spotify for musicians, music match, producer finder, songwriter collaboration, stem mixer">
+  <!-- Fonts: Outfit (headings) & Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Onboarding Screen -->
+  <div id="onboarding-overlay" class="overlay active">
+    <div class="onboarding-container card">
+      <div class="onboarding-header">
+        <img src="assets/logo.jpg" alt="CollabChord Logo" class="onboarding-logo">
+        <h1>Welcome to CollabChord</h1>
+        <p>Set up your musical profile to calculate your matching percentages with other creators in the industry.</p>
+      </div>
+
+      <form id="onboarding-form">
+        <div class="form-group">
+          <label for="user-name">Your Artist / Producer Name</label>
+          <input type="text" id="user-name" required placeholder="e.g., DJ Resonance, Sarah Keys">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>My Main Skills (Select up to 3)</label>
+            <div class="checkbox-grid" id="skills-grid">
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Producer"><span>Producer</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Vocalist"><span>Vocalist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Guitarist"><span>Guitarist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Keyboardist"><span>Keyboardist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Bass Player"><span>Bass Player</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Songwriter"><span>Songwriter</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Audio Engineer"><span>Audio Engineer</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="skills" value="Drummer"><span>Drummer</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>My Favorite Genres</label>
+            <div class="checkbox-grid" id="genres-grid">
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Synthwave"><span>Synthwave</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Pop"><span>Pop</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Hip-Hop"><span>Hip-Hop</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Rock"><span>Rock</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Lo-Fi"><span>Lo-Fi</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Cinematic"><span>Cinematic</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="R&B"><span>R&B</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="genres" value="Electronic"><span>Electronic</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>I am looking to collaborate with (Need roles):</label>
+            <div class="checkbox-grid" id="needs-grid">
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Producer"><span>Producer</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Vocalist"><span>Vocalist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Guitarist"><span>Guitarist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Keyboardist"><span>Keyboardist</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Songwriter"><span>Songwriter</span></label>
+              <label class="chip-checkbox"><input type="checkbox" name="needs" value="Audio Engineer"><span>Audio Engineer</span></label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full ripple">Enter CollabChord Dashboard</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App Shell Layout -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="logo-area">
+          <img src="assets/logo.jpg" alt="CollabChord" class="logo-img">
+          <span class="logo-text">CollabChord</span>
+        </div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item active" data-tab="home" id="nav-home">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+          </a>
+          <a href="#" class="nav-item" data-tab="discover" id="nav-discover">
+            <i data-lucide="compass"></i>
+            <span>Discover Matches</span>
+          </a>
+          <a href="#" class="nav-item" data-tab="project" id="nav-project">
+            <i data-lucide="layers"></i>
+            <span>Project Space</span>
+            <span class="badge badge-accent">Live</span>
+          </a>
+          <a href="#" class="nav-item" data-tab="messages" id="nav-messages">
+            <i data-lucide="message-square"></i>
+            <span>Messages</span>
+            <span class="badge notification-dot hidden" id="chat-notif-dot"></span>
+          </a>
+          <a href="#" class="nav-item" data-tab="profile" id="nav-profile">
+            <i data-lucide="user"></i>
+            <span>My Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-middle">
+        <span class="sidebar-title">Active Collaborations</span>
+        <div class="project-list" id="sidebar-projects-list">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="current-user-card" id="user-summary-card">
+          <div class="user-avatar-circle" id="user-avatar-initials">ME</div>
+          <div class="user-meta">
+            <span class="user-name-text" id="user-display-name">Guest Artist</span>
+            <span class="user-role-text" id="user-display-roles">Setup pending</span>
+          </div>
+          <button class="icon-btn" id="edit-profile-shortcut" title="Edit Profile">
+            <i data-lucide="settings"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top header bar -->
+      <header class="app-header">
+        <div class="header-search">
+          <i data-lucide="search"></i>
+          <input type="text" id="global-search" placeholder="Search musicians, beats, genres...">
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary flex-center gap-2" id="trigger-onboarding">
+            <i data-lucide="refresh-cw" size="16"></i>
+            Reset Profile
+          </button>
+          <div class="user-status-pill">
+            <span class="status-dot online"></span>
+            <span>Collaboration Active</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Dynamic Views -->
+      <div class="view-container">
+        
+        <!-- HOME VIEW -->
+        <section id="view-home" class="content-view active animate-fade-in">
+          <div class="hero-banner">
+            <div class="hero-content">
+              <span class="hero-tagline">Connecting the Music Industry</span>
+              <h1 class="gradient-text">Find Your Perfect Sound Match</h1>
+              <p>Your unique musical preferences have been mapped. Discover producers, vocalists, and engineers who complement your current creative requirements.</p>
+            </div>
+            <div class="hero-waves">
+              <div class="wave wave1"></div>
+              <div class="wave wave2"></div>
+              <div class="wave wave3"></div>
+            </div>
+          </div>
+
+          <div class="section-container">
+            <div class="section-header">
+              <h2>Your Top Collaboration Matches</h2>
+              <a href="#" class="view-all-link" data-target="discover">View All Matches &rarr;</a>
+            </div>
+            <div class="carousel-container">
+              <div class="cards-grid" id="top-matches-grid">
+                <!-- Dynamically populated top matching creators -->
+              </div>
+            </div>
+          </div>
+
+          <div class="section-container">
+            <h2>Active Bulletin Postings</h2>
+            <p class="section-desc">Open listings from artists looking for immediate collaboration. Tap Apply to connect.</p>
+            <div class="bulletin-grid" id="bulletin-postings">
+              <!-- Dynamically populated postings -->
+            </div>
+          </div>
+        </section>
+
+        <!-- DISCOVER MATCHES VIEW -->
+        <section id="view-discover" class="content-view hidden animate-fade-in">
+          <div class="view-header">
+            <div>
+              <h1>Discover Collaboration Partners</h1>
+              <p>Filter based on role, genres, and match percentage metrics. Match percentages update dynamically as you refine your profile.</p>
+            </div>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="filter-bar card">
+            <div class="filter-group">
+              <label for="filter-role">Role</label>
+              <select id="filter-role">
+                <option value="all">All Roles</option>
+                <option value="Producer">Producer</option>
+                <option value="Vocalist">Vocalist</option>
+                <option value="Guitarist">Guitarist</option>
+                <option value="Songwriter">Songwriter</option>
+                <option value="Audio Engineer">Audio Engineer</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-genre">Genre</label>
+              <select id="filter-genre">
+                <option value="all">All Genres</option>
+                <option value="Synthwave">Synthwave</option>
+                <option value="Pop">Pop</option>
+                <option value="Hip-Hop">Hip-Hop</option>
+                <option value="Rock">Rock</option>
+                <option value="Lo-Fi">Lo-Fi</option>
+                <option value="Cinematic">Cinematic</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-match">Min Match Percentage</label>
+              <input type="range" id="filter-match" min="30" max="100" value="30">
+              <span id="filter-match-val">30%</span>
+            </div>
+            <button class="btn btn-secondary" id="clear-filters">Reset Filters</button>
+          </div>
+
+          <div class="creators-directory-grid" id="creators-directory-grid">
+            <!-- Full directory of matches -->
+          </div>
+        </section>
+
+        <!-- PROJECT SPACE VIEW -->
+        <section id="view-project" class="content-view hidden animate-fade-in">
+          <div class="view-header">
+            <div>
+              <h1 id="active-project-title">Collaboration Project Space</h1>
+              <p>Share demo tracks, review waveforms, control independent stems, and discuss musical feedback.</p>
+            </div>
+            <div class="project-header-actions">
+              <span class="project-status-badge">Work-in-Progress</span>
+            </div>
+          </div>
+
+          <div class="project-split-layout">
+            <!-- Left: Stem Mixer & Audio Timeline -->
+            <div class="project-main-panel card">
+              <div class="project-banner">
+                <div class="project-details">
+                  <h2 id="project-track-name">Summer Chill Vibes</h2>
+                  <p>Co-producing with <strong id="project-collaborator-name">Marcus Keys</strong></p>
+                </div>
+                <div class="project-art-placeholder" id="project-art-glow">
+                  <i data-lucide="music" size="32"></i>
+                </div>
+              </div>
+
+              <!-- Stem Mixer (The Wow Factor) -->
+              <div class="stem-mixer-container">
+                <h3>Multi-Track Stem Mixer</h3>
+                <p class="section-desc">Toggle solo/mute or adjust volumes to mix and listen to independent stem tracks synchronously.</p>
+                
+                <div class="mixer-tracks">
+                  <!-- Track 1 -->
+                  <div class="mixer-track-row" data-stem="drums">
+                    <div class="track-info">
+                      <i data-lucide="music-4"></i>
+                      <div>
+                        <span class="track-name">Drums Stem</span>
+                        <span class="track-file-meta">Stereo Beat loop • Synth Drums</span>
+                      </div>
+                    </div>
+                    <div class="track-controls">
+                      <button class="mixer-btn mute-btn" id="mute-drums" title="Mute">M</button>
+                      <button class="mixer-btn solo-btn" id="solo-drums" title="Solo">S</button>
+                      <div class="volume-slider-group">
+                        <i data-lucide="volume-1" size="14"></i>
+                        <input type="range" class="stem-volume" id="volume-drums" min="0" max="100" value="80">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Track 2 -->
+                  <div class="mixer-track-row" data-stem="bass">
+                    <div class="track-info">
+                      <i data-lucide="music-2"></i>
+                      <div>
+                        <span class="track-name">Bassline Stem</span>
+                        <span class="track-file-meta">Mono sub-synth • Low-end groove</span>
+                      </div>
+                    </div>
+                    <div class="track-controls">
+                      <button class="mixer-btn mute-btn" id="mute-bass" title="Mute">M</button>
+                      <button class="mixer-btn solo-btn" id="solo-bass" title="Solo">S</button>
+                      <div class="volume-slider-group">
+                        <i data-lucide="volume-1" size="14"></i>
+                        <input type="range" class="stem-volume" id="volume-bass" min="0" max="100" value="70">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Track 3 -->
+                  <div class="mixer-track-row" data-stem="melody">
+                    <div class="track-info">
+                      <i data-lucide="mic"></i>
+                      <div>
+                        <span class="track-name">Chords & Melody Stem</span>
+                        <span class="track-file-meta">Harmonic layer • Leads and progressions</span>
+                      </div>
+                    </div>
+                    <div class="track-controls">
+                      <button class="mixer-btn mute-btn" id="mute-melody" title="Mute">M</button>
+                      <button class="mixer-btn solo-btn" id="solo-melody" title="Solo">S</button>
+                      <div class="volume-slider-group">
+                        <i data-lucide="volume-1" size="14"></i>
+                        <input type="range" class="stem-volume" id="volume-melody" min="0" max="100" value="80">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mixer-master-bar">
+                  <div class="mixer-master-label">Master Output</div>
+                  <div class="mixer-master-actions">
+                    <button class="btn btn-primary" id="mixer-play-btn">
+                      <i data-lucide="play" size="16"></i> Play Mix
+                    </button>
+                    <button class="btn btn-secondary" id="stem-upload-sim" title="Simulate uploading a new stem">
+                      <i data-lucide="upload" size="16"></i> Upload Stem
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Visual Feedback comments timeline -->
+              <div class="waveform-comments-container">
+                <h3>Visual Waveform & Timed Notes</h3>
+                <div class="timeline-visualizer-container">
+                  <div class="timeline-scrubber" id="waveform-scrubber" style="left: 0%;"></div>
+                  <canvas id="project-waveform-canvas"></canvas>
+                  
+                  <!-- Tiny marker pins for feedback -->
+                  <div class="comment-pin" style="left: 20%;" data-time="0:12" data-comment="Drums should hit harder here."></div>
+                  <div class="comment-pin" style="left: 55%;" data-time="0:33" data-comment="Fabulous transition, love the bass drop!"></div>
+                </div>
+                <div class="comments-list" id="waveform-comments-list">
+                  <div class="comment-card">
+                    <span class="comment-time">0:12</span>
+                    <span class="comment-body"><strong>Elena:</strong> Drums should hit harder here. Can we EQ the sub-bass?</span>
+                  </div>
+                  <div class="comment-card">
+                    <span class="comment-time">0:33</span>
+                    <span class="comment-body"><strong>Marcus (Keys):</strong> Fabulous transition, love the bass drop! Synth needs minor reverb.</span>
+                  </div>
+                </div>
+                <div class="add-timeline-comment">
+                  <input type="text" id="new-timeline-comment" placeholder="Add a timed comment at current position...">
+                  <button class="btn btn-secondary" id="submit-timeline-comment">Add Note</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Collaboration Chat Panel -->
+            <div class="project-chat-panel card">
+              <div class="chat-header">
+                <h3>Project Chat</h3>
+                <span class="status-indicator"><span class="status-dot online"></span>Active Now</span>
+              </div>
+              <div class="chat-messages" id="project-chat-messages">
+                <!-- Chat loaded dynamically -->
+              </div>
+              <div class="chat-input-bar">
+                <input type="text" id="project-chat-input" placeholder="Discuss composition, lyrics, stems...">
+                <button class="icon-btn" id="project-chat-send">
+                  <i data-lucide="send"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MESSAGES VIEW -->
+        <section id="view-messages" class="content-view hidden animate-fade-in">
+          <div class="view-header">
+            <h1>Inbox & Negotiations</h1>
+            <p>Pitch collaboration proposals to other professionals in the industry.</p>
+          </div>
+
+          <div class="inbox-layout">
+            <div class="inbox-sidebar card">
+              <div class="inbox-tabs">
+                <button class="inbox-tab active">All</button>
+                <button class="inbox-tab">Unread</button>
+              </div>
+              <div class="conversations-list" id="inbox-conversations">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+            
+            <div class="inbox-chat-pane card">
+              <div id="no-chat-selected" class="no-selection flex-column flex-center">
+                <i data-lucide="message-square" size="48"></i>
+                <h3>Select a conversation</h3>
+                <p>Start pitching projects and negotiating splits with matches.</p>
+              </div>
+              <div id="active-inbox-chat" class="chat-pane-inner hidden">
+                <div class="chat-pane-header">
+                  <div class="chat-partner-info">
+                    <img src="" alt="" id="chat-partner-avatar" class="avatar-sm">
+                    <div>
+                      <h3 id="chat-partner-name">Creator Name</h3>
+                      <span id="chat-partner-match-badge" class="badge">95% Match</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" id="chat-open-project-btn">
+                    <i data-lucide="external-link" size="14"></i> Open Space
+                  </button>
+                </div>
+                <div class="chat-messages-container" id="inbox-chat-messages">
+                  <!-- Loaded dynamically -->
+                </div>
+                <div class="chat-input-bar">
+                  <input type="text" id="inbox-chat-input" placeholder="Type a message or proposal...">
+                  <button class="icon-btn" id="inbox-chat-send">
+                    <i data-lucide="send"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MY PROFILE VIEW -->
+        <section id="view-profile" class="content-view hidden animate-fade-in">
+          <div class="view-header">
+            <h1>My Collaboration Profile</h1>
+            <p>Update your details to automatically recalculate matching metrics with all creators on CollabChord.</p>
+          </div>
+
+          <div class="profile-layout">
+            <div class="profile-card card text-center">
+              <div class="profile-avatar-large">ME</div>
+              <h2 id="profile-name-display">Guest Artist</h2>
+              <div class="skill-tags" id="profile-skills-tags-display">
+                <!-- Rendered dynamically -->
+              </div>
+              <hr class="divider">
+              <div class="profile-stat-row">
+                <div class="stat-box">
+                  <span class="stat-number" id="profile-stat-matches">4</span>
+                  <span class="stat-label">Matches Found</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-number">1</span>
+                  <span class="stat-label">Active Project</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-edit-card card">
+              <h3>Edit Profile Details</h3>
+              <form id="profile-edit-form">
+                <div class="form-group">
+                  <label for="edit-name">Artist Name</label>
+                  <input type="text" id="edit-name" required>
+                </div>
+                
+                <div class="form-group">
+                  <label>Edit My Skills</label>
+                  <div class="checkbox-grid" id="edit-skills-grid">
+                    <!-- Loaded dynamically -->
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Edit My Favorite Genres</label>
+                  <div class="checkbox-grid" id="edit-genres-grid">
+                    <!-- Loaded dynamically -->
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>What I'm Looking For (Collaboration Needs)</label>
+                  <div class="checkbox-grid" id="edit-needs-grid">
+                    <!-- Loaded dynamically -->
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary ripple">Save Profile Changes</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Right Sidebar (Live Match Analyzer) -->
+    <aside class="right-sidebar">
+      <div class="right-panel card">
+        <div class="panel-header">
+          <h3>Match Analyzer</h3>
+          <i data-lucide="cpu" size="18"></i>
+        </div>
+        <p class="section-desc">How you match with the current active track/artist:</p>
+        <div class="analyzer-content" id="active-match-analyzer">
+          <div class="analyzer-placeholder flex-column flex-center">
+            <i data-lucide="bar-chart-2" size="32"></i>
+            <p>Select a creator or play a song to show real-time match breakdown.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel card">
+        <div class="panel-header">
+          <h3>Activity Feed</h3>
+          <i data-lucide="activity" size="18"></i>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <span class="activity-dot"></span>
+            <div class="activity-details">
+              <strong>Marcus Keys</strong> updated drums in <em>Summer Chill Vibes</em>
+              <span class="activity-time">5m ago</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <span class="activity-dot"></span>
+            <div class="activity-details">
+              <strong>Elena Rostova</strong> is looking for a <em>mix engineer</em> for a pop track
+              <span class="activity-time">1h ago</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <span class="activity-dot"></span>
+            <div class="activity-details">
+              <strong>Chloe Vance</strong> liked your guitar riff stem
+              <span class="activity-time">3h ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Bottom Playback Control Bar (Spotify Style) -->
+  <footer class="player-bar">
+    <!-- Left: Album cover & title -->
+    <div class="player-left">
+      <div class="track-cover-art" id="player-cover-art">
+        <i data-lucide="music" size="18"></i>
+      </div>
+      <div class="player-track-info">
+        <span class="player-track-title" id="player-title">No Track Loaded</span>
+        <span class="player-track-artist" id="player-artist">Select a profile track</span>
+      </div>
+      <div class="player-match-indicator hidden" id="player-match-badge-wrap">
+        <span class="badge badge-accent" id="player-match-badge">--% Match</span>
+      </div>
+    </div>
+
+    <!-- Center: Playback buttons & Progress bar -->
+    <div class="player-center">
+      <div class="player-controls">
+        <button class="control-btn icon-btn" id="player-btn-shuffle" title="Shuffle">
+          <i data-lucide="shuffle" size="16"></i>
+        </button>
+        <button class="control-btn icon-btn" id="player-btn-prev" title="Previous">
+          <i data-lucide="skip-back" size="18"></i>
+        </button>
+        <button class="control-btn play-btn" id="player-btn-play" title="Play">
+          <i data-lucide="play" size="20" fill="currentColor"></i>
+        </button>
+        <button class="control-btn icon-btn" id="player-btn-next" title="Next">
+          <i data-lucide="skip-forward" size="18"></i>
+        </button>
+        <button class="control-btn icon-btn" id="player-btn-loop" title="Enable Repeat">
+          <i data-lucide="repeat" size="16"></i>
+        </button>
+      </div>
+      
+      <div class="player-timeline">
+        <span class="time-elapsed" id="player-time-elapsed">0:00</span>
+        <div class="timeline-bar-bg" id="player-progress-container">
+          <div class="timeline-bar-fill" id="player-progress-bar" style="width: 0%;"></div>
+        </div>
+        <span class="time-duration" id="player-time-duration">0:00</span>
+      </div>
+    </div>
+
+    <!-- Right: Visualizer & Volume -->
+    <div class="player-right">
+      <div class="visualizer-mini" id="mini-visualizer-container" title="Audio Visualizer">
+        <canvas id="mini-visualizer"></canvas>
+      </div>
+      
+      <div class="volume-controls">
+        <button class="icon-btn" id="player-btn-volume" title="Mute/Unmute">
+          <i data-lucide="volume-2" size="18"></i>
+        </button>
+        <div class="volume-bar-bg" id="player-volume-container">
+          <div class="volume-bar-fill" id="player-volume-bar" style="width: 80%;"></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Artist Modal (Quick View) -->
+  <div id="artist-modal" class="modal overlay">
+    <div class="modal-content card">
+      <button class="modal-close-btn" id="close-artist-modal">&times;</button>
+      <div class="modal-header-section" id="modal-banner-bg">
+        <div class="modal-header-profile">
+          <img src="" alt="" id="modal-avatar" class="avatar-lg">
+          <div>
+            <h2 id="modal-name">Creator Name</h2>
+            <div id="modal-roles" class="skill-tags"></div>
+          </div>
+        </div>
+        <div class="modal-match-circle">
+          <svg class="progress-ring" width="80" height="80">
+            <circle class="progress-ring-circle-bg" stroke="#333" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+            <circle class="progress-ring-circle" id="modal-match-ring" stroke="#00e5ff" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+          </svg>
+          <span class="modal-match-percentage" id="modal-match-text">--%</span>
+          <span class="modal-match-label">Match</span>
+        </div>
+      </div>
+
+      <div class="modal-body-layout">
+        <div class="modal-left-details">
+          <h3>Bio & Influence</h3>
+          <p id="modal-bio">Bio description goes here...</p>
+          
+          <h3>Musical Focus & Genres</h3>
+          <div id="modal-genres" class="skill-tags"></div>
+
+          <h3>Collaboration Requirements</h3>
+          <div class="requirements-box" id="modal-requirements">
+            <!-- Details -->
+          </div>
+        </div>
+
+        <div class="modal-right-playlist">
+          <h3>Demo Tracks</h3>
+          <div class="modal-tracks-list" id="modal-tracks-list">
+            <!-- Dynamically rendered profile tracks -->
+          </div>
+          
+          <div class="modal-action-buttons">
+            <button class="btn btn-primary flex-center gap-2" id="modal-pitch-btn">
+              <i data-lucide="message-square" size="18"></i> Pitch Collaboration
+            </button>
+            <button class="btn btn-secondary flex-center gap-2" id="modal-jam-btn">
+              <i data-lucide="layers" size="18"></i> Jam in Project Space
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript file -->
+  <script src="app.js"></script>
+</body>
+</html>
