@@ -1,0 +1,126 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  username      String          @unique
+  password      String
+
+  bio           String?
+  avatar        String?
+
+  projectsOwned Project[]       @relation("ProjectOwner")
+  collaborations Collaboration[]
+  messages      Message[]
+  notifications Notification[]
+  audioFiles    AudioFile[]
+  activities    Activity[]
+  analyticsEvents AnalyticsEvent[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Project {
+  id            String          @id @default(uuid())
+  title         String
+  description   String?
+  genre         String?
+
+  ownerId       String
+  owner         User            @relation("ProjectOwner", fields: [ownerId], references: [id])
+
+  collaborators Collaboration[]
+  messages      Message[]
+  audioFiles    AudioFile[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Collaboration {
+  id        String   @id @default(uuid())
+
+  userId    String
+  projectId String
+
+  role      String   @default("viewer")
+  status    String   @default("pending") // pending | accepted | rejected
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String   // invite | accept | reject | upload | message
+  message   String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  projectId String?
+  isRead    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model AudioFile {
+  id          String   @id @default(uuid())
+  filename    String
+  url         String
+  mimetype    String
+  size        Int
+
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  uploadedBy  String
+  uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  type      String   // project_created | invite_sent | invite_accepted | invite_rejected | audio_uploaded
+  message   String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  projectId String?
+  createdAt DateTime @default(now())
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  type      String   // login | project_created | audio_uploaded | invite_sent | message_sent
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  projectId String?
+  metadata  String?
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,12 @@
+# Dependency directories
+node_modules/
+
+# Local databases
+*.db
+*.db-journal
+
+# Secrets / Configuration
+.env
+
+# Logs
+*.log
