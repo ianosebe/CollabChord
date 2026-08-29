@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CollabChord Mobile | Music Collaboration Hub</title>
+  
+  <!-- Fonts: Outfit (headings) & Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Custom Mobile Stylesheet -->
+  <link rel="stylesheet" href="mobile.css">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Desktop Presentation Wrapper (shows simulated phone on desktop, raw full page on mobile) -->
+  <div class="presentation-wrapper">
+    <div class="presentation-sidebar">
+      <div class="brand-header">
+        <img src="assets/logo.jpg" alt="CollabChord Logo" class="brand-logo">
+        <h2>CollabChord Mobile</h2>
+        <span class="version-badge">v1.2 Premium</span>
+      </div>
+      <p class="brand-description">
+        Experience the music industry's matching engine on the go. Swipe to match, chat splits, and mix multi-track stems synchronously.
+      </p>
+      
+      <div class="simulator-controls">
+        <h3>Simulator Settings</h3>
+        <button class="btn btn-secondary btn-full flex-center gap-2" id="toggle-device-shell">
+          <i data-lucide="smartphone"></i> Toggle Device Frame
+        </button>
+        <button class="btn btn-secondary btn-full flex-center gap-2" id="reset-simulator-profile">
+          <i data-lucide="refresh-cw"></i> Reset Profile Flow
+        </button>
+      </div>
+
+      <div class="simulator-features">
+        <div class="feature-item">
+          <i data-lucide="layers" class="feature-icon"></i>
+          <div>
+            <h4>Interactive Stem Mixer</h4>
+            <p>Drag touch-friendly faders to control levels of independent stems.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i data-lucide="sparkles" class="feature-icon"></i>
+          <div>
+            <h4>Tinder-Style Matcher</h4>
+            <p>Swipe right to pitch collaborations, swipe left to browse others.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i data-lucide="sliders" class="feature-icon"></i>
+          <div>
+            <h4>Dynamic Audio Synthesizer</h4>
+            <p>Actually plays procedurally generated drums, bass, and synth chords!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone Simulator Shell -->
+    <div class="device-frame" id="phone-frame">
+      <div class="device-notch"></div>
+      <div class="device-volume volume-up"></div>
+      <div class="device-volume volume-down"></div>
+      <div class="device-power"></div>
+      <div class="device-screen">
+        
+        <!-- --- MOBILE APPLICATION CORE --- -->
+        <div class="mobile-app-root">
+          
+          <!-- Mobile Status Bar -->
+          <div class="mobile-status-bar">
+            <span class="status-bar-time" id="status-time">09:41</span>
+            <div class="status-bar-icons">
+              <i data-lucide="signal" size="14"></i>
+              <i data-lucide="wifi" size="14"></i>
+              <div class="status-bar-battery">
+                <span class="battery-percent">98%</span>
+                <i data-lucide="battery" size="16"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Onboarding & Profile Setup Overlay -->
+          <div id="mobile-onboarding-overlay" class="mobile-overlay active">
+            <div class="onboarding-carousel" id="onboarding-slider">
+              <!-- Slide 1: Welcome -->
+              <div class="onboarding-slide active" data-slide="0">
+                <div class="slide-illustration">
+                  <div class="pulse-ring"></div>
+                  <img src="assets/logo.jpg" alt="Logo" class="slide-logo">
+                </div>
+                <h2>CollabChord Mobile</h2>
+                <p>Welcome to the ultimate hub for matching, pitching, and collaborating with music creators.</p>
+                <div class="slide-dots">
+                  <span class="dot active"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+                <button class="btn btn-primary btn-full next-slide-btn">Get Started</button>
+              </div>
+
+              <!-- Slide 2: Swipe Match -->
+              <div class="onboarding-slide" data-slide="1">
+                <div class="slide-illustration">
+                  <div class="swipe-animation-mock">
+                    <div class="mock-card swipe-right-mock">
+                      <i data-lucide="music-4" size="32"></i>
+                      <span>96% Match</span>
+                    </div>
+                  </div>
+                </div>
+                <h2>Swipe to Match</h2>
+                <p>Browse creators matched to your exact artistic style and project requirements. Swipe right to pitch instantly.</p>
+                <div class="slide-dots">
+                  <span class="dot"></span>
+                  <span class="dot active"></span>
+                  <span class="dot"></span>
+                </div>
+                <button class="btn btn-primary btn-full next-slide-btn">Continue</button>
+              </div>
+
+              <!-- Slide 3: Profile Setup -->
+              <div class="onboarding-slide" data-slide="2">
+                <div class="slide-form-container">
+                  <h3>Build Your Music Identity</h3>
+                  <p class="slide-subtitle">We use this to compute match percentages instantly.</p>
+                  
+                  <form id="mobile-setup-form">
+                    <div class="form-group">
+                      <label for="mob-user-name">Your Stage Name</label>
+                      <input type="text" id="mob-user-name" required placeholder="e.g. Luna Beats, DJ Resonance">
+                    </div>
+                    
+                    <div class="form-group select-chips-group">
+                      <label>Main Skills (Choose up to 2)</label>
+                      <div class="chip-selection" id="mob-skills-selection">
+                        <span class="chip-item" data-val="Producer">Producer</span>
+                        <span class="chip-item" data-val="Vocalist">Vocalist</span>
+                        <span class="chip-item" data-val="Guitarist">Guitarist</span>
+                        <span class="chip-item" data-val="Keyboardist">Keyboardist</span>
+                        <span class="chip-item" data-val="Songwriter">Songwriter</span>
+                        <span class="chip-item" data-val="Audio Engineer">Engineer</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group select-chips-group">
+                      <label>Favorite Genres (Choose up to 2)</label>
+                      <div class="chip-selection" id="mob-genres-selection">
+                        <span class="chip-item" data-val="Synthwave">Synthwave</span>
+                        <span class="chip-item" data-val="Pop">Pop</span>
+                        <span class="chip-item" data-val="Hip-Hop">Hip-Hop</span>
+                        <span class="chip-item" data-val="Rock">Rock</span>
+                        <span class="chip-item" data-val="Lo-Fi">Lo-Fi</span>
+                        <span class="chip-item" data-val="Cinematic">Cinematic</span>
+                      </div>
+                    </div>
+
+                    <div class="form-group select-chips-group">
+                      <label>Who do you need? (Collaboration Need)</label>
+                      <div class="chip-selection" id="mob-needs-selection">
+                        <span class="chip-item" data-val="Producer">Producer</span>
+                        <span class="chip-item" data-val="Vocalist">Vocalist</span>
+                        <span class="chip-item" data-val="Guitarist">Guitarist</span>
+                        <span class="chip-item" data-val="Keyboardist">Keyboardist</span>
+                        <span class="chip-item" data-val="Songwriter">Songwriter</span>
+                        <span class="chip-item" data-val="Audio Engineer">Engineer</span>
+                      </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full ripple">Enter CollabChord Dashboard</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match Popup Overlay -->
+          <div id="match-popup-overlay" class="mobile-overlay flex-column flex-center hidden">
+            <div class="match-success-container card text-center scale-up">
+              <div class="match-stars"><i data-lucide="sparkles" size="48"></i></div>
+              <h2 class="neon-text">It's a Sound Match!</h2>
+              <p>You and <strong id="matched-artist-name">Artist Name</strong> have matched style parameters.</p>
+              
+              <div class="match-avatars-overlap">
+                <div class="avatar-circle user-avatar-placeholder">ME</div>
+                <img src="" alt="Partner" class="avatar-circle" id="matched-artist-avatar">
+              </div>
+
+              <button class="btn btn-primary btn-full" id="match-popup-chat-btn">Pitch Instantly</button>
+              <button class="btn btn-secondary btn-full" id="match-popup-close-btn">Keep Swiping</button>
+            </div>
+          </div>
+
+          <!-- Main Scrollable App Views -->
+          <div class="mobile-views-container">
+
+            <!-- VIEW 1: SWIPE MATCHER -->
+            <section id="screen-matcher" class="mobile-screen active">
+              <header class="mobile-screen-header">
+                <span class="screen-title-logo">CollabChord</span>
+                <button class="icon-btn" id="matcher-reset-deck" title="Shuffle Deck">
+                  <i data-lucide="refresh-cw" size="18"></i>
+                </button>
+              </header>
+              
+              <div class="card-deck-container">
+                <div class="card-deck" id="swipe-deck">
+                  <!-- Swipe cards are generated dynamically in JS -->
+                </div>
+                
+                <!-- Deck finished fallback state -->
+                <div class="deck-empty-state hidden">
+                  <i data-lucide="frown" size="48"></i>
+                  <h3>No more cards</h3>
+                  <p>Check back later for new active creators in your vicinity.</p>
+                  <button class="btn btn-primary btn-sm mt-3" id="reload-cards-btn">Reload Profiles</button>
+                </div>
+              </div>
+
+              <!-- Swipe Action Buttons -->
+              <div class="swipe-actions-bar">
+                <button class="action-btn btn-dislike ripple" id="swipe-btn-dislike">
+                  <i data-lucide="x" size="24"></i>
+                </button>
+                <button class="action-btn btn-info-draw ripple" id="swipe-btn-info">
+                  <i data-lucide="cpu" size="20"></i>
+                </button>
+                <button class="action-btn btn-like ripple" id="swipe-btn-like">
+                  <i data-lucide="heart" size="24" fill="currentColor"></i>
+                </button>
+              </div>
+            </section>
+
+            <!-- VIEW 2: DISCOVER -->
+            <section id="screen-discover" class="mobile-screen hidden">
+              <header class="mobile-screen-header">
+                <h2>Browse Matches</h2>
+                <span class="active-badge" id="discover-matches-count">4 Matches</span>
+              </header>
+              <div class="screen-scroll-content">
+                <!-- Search -->
+                <div class="mobile-search-bar">
+                  <i data-lucide="search" size="16"></i>
+                  <input type="text" id="mobile-search-input" placeholder="Search genres, roles, names...">
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-pills-row">
+                  <select id="mob-filter-role">
+                    <option value="all">All Roles</option>
+                    <option value="Producer">Producer</option>
+                    <option value="Vocalist">Vocalist</option>
+                    <option value="Guitarist">Guitarist</option>
+                    <option value="Keyboardist">Keyboardist</option>
+                    <option value="Songwriter">Songwriter</option>
+                    <option value="Audio Engineer">Audio Engineer</option>
+                  </select>
+                  <select id="mob-filter-genre">
+                    <option value="all">All Genres</option>
+                    <option value="Synthwave">Synthwave</option>
+                    <option value="Pop">Pop</option>
+                    <option value="Hip-Hop">Hip-Hop</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Lo-Fi">Lo-Fi</option>
+                    <option value="Cinematic">Cinematic</option>
+                  </select>
+                </div>
+
+                <!-- Creators List -->
+                <div class="discover-creators-list" id="discover-creators-list">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW 3: PROJECT SPACE -->
+            <section id="screen-project" class="mobile-screen hidden">
+              <header class="mobile-screen-header">
+                <h2>Project Mixer</h2>
+                <div class="header-project-pill">
+                  <span class="active-dot"></span>
+                  <span id="mixer-project-name">Summer Chill Vibes</span>
+                </div>
+              </header>
+              
+              <div class="screen-scroll-content">
+                <div class="project-info-card">
+                  <div class="project-meta-top">
+                    <div>
+                      <h3 id="mob-project-track-title">Summer Chill Vibes</h3>
+                      <p>Collaboration with <strong id="mob-project-collab-name">Marcus Keys</strong></p>
+                    </div>
+                    <div class="project-pulse-disc">
+                      <i data-lucide="disc" size="24"></i>
+                    </div>
+                  </div>
+
+                  <!-- Waveform visualizer timeline -->
+                  <div class="mobile-waveform-area">
+                    <div class="timeline-scrubber" id="mob-waveform-scrubber" style="left: 0%;"></div>
+                    <canvas id="mob-project-waveform"></canvas>
+                    
+                    <!-- Feedback comment pins -->
+                    <div class="mob-comment-pin" style="left: 20%;" data-time="0:12" data-comment="Elena: Drums should hit harder here."></div>
+                    <div class="mob-comment-pin" style="left: 55%;" data-time="0:33" data-comment="Marcus: Great drop, add reverb to lead."></div>
+                  </div>
+                  
+                  <div class="waveform-controls">
+                    <span class="waveform-time-marker" id="mob-mixer-time">0:00</span>
+                    <button class="btn btn-secondary btn-sm flex-center gap-1" id="mob-add-comment-trigger">
+                      <i data-lucide="plus" size="14"></i> Add Time Note
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Stem Volume Multi-Faders -->
+                <div class="stem-mixer-touchcard">
+                  <div class="touchcard-header">
+                    <h4>Multi-Track Stem Mixer</h4>
+                    <span class="touchcard-action" id="mob-mixer-play-btn">
+                      <i data-lucide="play" size="16"></i> Play Mix
+                    </span>
+                  </div>
+                  
+                  <div class="mixer-faders-grid">
+                    <!-- Fader 1: Drums -->
+                    <div class="mixer-fader-column" data-stem="drums">
+                      <div class="fader-track-indicator">
+                        <button class="fader-btn mute" id="mob-mute-drums">M</button>
+                        <button class="fader-btn solo" id="mob-solo-drums">S</button>
+                      </div>
+                      <div class="slider-vertical-container">
+                        <input type="range" class="vertical-slider" id="mob-vol-drums" min="0" max="100" value="80" orient="vertical">
+                      </div>
+                      <span class="fader-label">Drums</span>
+                      <span class="fader-val-label" id="mob-lbl-drums">80%</span>
+                    </div>
+
+                    <!-- Fader 2: Bass -->
+                    <div class="mixer-fader-column" data-stem="bass">
+                      <div class="fader-track-indicator">
+                        <button class="fader-btn mute" id="mob-mute-bass">M</button>
+                        <button class="fader-btn solo" id="mob-solo-bass">S</button>
+                      </div>
+                      <div class="slider-vertical-container">
+                        <input type="range" class="vertical-slider" id="mob-vol-bass" min="0" max="100" value="70" orient="vertical">
+                      </div>
+                      <span class="fader-label">Bass</span>
+                      <span class="fader-val-label" id="mob-lbl-bass">70%</span>
+                    </div>
+
+                    <!-- Fader 3: Melody -->
+                    <div class="mixer-fader-column" data-stem="melody">
+                      <div class="fader-track-indicator">
+                        <button class="fader-btn mute" id="mob-mute-melody">M</button>
+                        <button class="fader-btn solo" id="mob-solo-melody">S</button>
+                      </div>
+                      <div class="slider-vertical-container">
+                        <input type="range" class="vertical-slider" id="mob-vol-melody" min="0" max="100" value="80" orient="vertical">
+                      </div>
+                      <span class="fader-label">Lead</span>
+                      <span class="fader-val-label" id="mob-lbl-melody">80%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Timeline Timed Comments -->
+                <div class="project-comments-card">
+                  <h4>Timeline Notes</h4>
+                  <div class="comments-scroll" id="mob-comments-list">
+                    <!-- Loaded dynamically -->
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW 4: INBOX -->
+            <section id="screen-messages" class="mobile-screen hidden">
+              <header class="mobile-screen-header">
+                <h2>Inbox</h2>
+                <span class="inbox-notification-badge hidden" id="mob-inbox-badge">1</span>
+              </header>
+
+              <!-- Inbox chats container -->
+              <div class="inbox-list-container" id="mob-inbox-conversations">
+                <!-- Conversations lists populated here -->
+              </div>
+
+              <!-- Sliding Full-Screen Chat Overlay -->
+              <div class="mobile-chat-screen-overlay" id="mob-chat-pane">
+                <div class="chat-header">
+                  <button class="icon-btn" id="mob-chat-back-btn">
+                    <i data-lucide="chevron-left" size="24"></i>
+                  </button>
+                  <img src="" alt="Avatar" class="chat-header-avatar" id="mob-chat-partner-avatar">
+                  <div class="chat-header-meta">
+                    <h3 id="mob-chat-partner-name">Elena</h3>
+                    <span id="mob-chat-partner-status"><span class="status-dot online"></span>Online</span>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" id="mob-chat-project-btn">Mix Space</button>
+                </div>
+
+                <div class="chat-messages-scroll" id="mob-chat-messages">
+                  <!-- Messages populated -->
+                </div>
+
+                <!-- Quick suggestion split negotiation buttons -->
+                <div class="chat-suggestions-bar">
+                  <button class="suggestion-chip">Send Demo Track</button>
+                  <button class="suggestion-chip">Let's Jam</button>
+                  <button class="suggestion-chip">Discuss 50/50 Splits</button>
+                </div>
+
+                <div class="chat-input-row">
+                  <input type="text" id="mob-chat-input" placeholder="Type proposal message...">
+                  <button class="icon-btn" id="mob-chat-send">
+                    <i data-lucide="send" size="18"></i>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW 5: USER PROFILE -->
+            <section id="screen-profile" class="mobile-screen hidden">
+              <header class="mobile-screen-header">
+                <h2>My Profile</h2>
+                <button class="icon-btn" id="mob-logout-btn">
+                  <i data-lucide="log-out" size="18"></i>
+                </button>
+              </header>
+
+              <div class="screen-scroll-content">
+                <div class="profile-header-card card text-center">
+                  <div class="profile-avatar-large" id="mob-profile-avatar-initials">ME</div>
+                  <h3 id="mob-profile-name">Guest Artist</h3>
+                  <p class="profile-location-text"><i data-lucide="map-pin" size="12"></i> Global Resident</p>
+                  
+                  <div class="profile-tags" id="mob-profile-skills-tags">
+                    <!-- Loaded dynamically -->
+                  </div>
+
+                  <div class="profile-stats-row">
+                    <div class="stat-box">
+                      <span class="stat-number" id="mob-stat-matches">4</span>
+                      <span class="stat-label">Matches</span>
+                    </div>
+                    <div class="stat-box">
+                      <span class="stat-number">1</span>
+                      <span class="stat-label">Mix Project</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Profile Edit Form -->
+                <div class="profile-details-card card">
+                  <h4>Edit Artist Settings</h4>
+                  <form id="mob-profile-edit-form">
+                    <div class="form-group">
+                      <label for="mob-edit-name">Artist Name</label>
+                      <input type="text" id="mob-edit-name" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Update My Skills</label>
+                      <div class="checkbox-pill-grid" id="mob-edit-skills-grid">
+                        <!-- Loaded dynamically -->
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Update My Genres</label>
+                      <div class="checkbox-pill-grid" id="mob-edit-genres-grid">
+                        <!-- Loaded dynamically -->
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Update Collaboration Needs</label>
+                      <div class="checkbox-pill-grid" id="mob-edit-needs-grid">
+                        <!-- Loaded dynamically -->
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full ripple">Save Changes</button>
+                  </form>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- MINI PLAYER CONTROL BAR -->
+          <div class="mobile-mini-player" id="mini-player">
+            <div class="mini-player-left" id="mini-player-expand-btn">
+              <div class="mini-cover-art" id="mini-player-cover">
+                <i data-lucide="music" size="14"></i>
+              </div>
+              <div class="mini-track-info">
+                <span class="mini-title" id="mini-player-title">No Track Played</span>
+                <span class="mini-artist" id="mini-player-artist">Tap card or play mixer</span>
+              </div>
+              <div class="mini-match-pill hidden" id="mini-player-match-wrap">
+                <span id="mini-player-match-badge">95%</span>
+              </div>
+            </div>
+            
+            <div class="mini-player-right">
+              <button class="icon-btn play-btn" id="mini-player-btn-play" title="Play">
+                <i data-lucide="play" size="18" fill="currentColor"></i>
+              </button>
+            </div>
+
+            <!-- Tiny mini scrubber line -->
+            <div class="mini-player-scrubber-bg">
+              <div class="mini-player-scrubber-fill" id="mini-player-progress" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Tab Bar -->
+          <nav class="mobile-tab-bar">
+            <a href="#" class="tab-item active" data-tab="matcher">
+              <i data-lucide="sparkles"></i>
+              <span>Match</span>
+            </a>
+            <a href="#" class="tab-item" data-tab="discover">
+              <i data-lucide="search"></i>
+              <span>Browse</span>
+            </a>
+            <a href="#" class="tab-item" data-tab="project">
+              <i data-lucide="sliders"></i>
+              <span>Mixer</span>
+              <span class="tab-dot" id="mixer-tab-dot"></span>
+            </a>
+            <a href="#" class="tab-item" data-tab="messages">
+              <i data-lucide="message-square"></i>
+              <span>Inbox</span>
+              <span class="tab-dot hidden" id="inbox-tab-dot"></span>
+            </a>
+            <a href="#" class="tab-item" data-tab="profile">
+              <i data-lucide="user"></i>
+              <span>Profile</span>
+            </a>
+          </nav>
+
+          <!-- iOS-STYLE EXPANDABLE FULL SCREEN AUDIO PLAYER BOTTOM SHEET -->
+          <div class="bottom-sheet-overlay" id="audio-player-sheet">
+            <div class="bottom-sheet-container">
+              <!-- Draggable handle bar -->
+              <div class="bottom-sheet-handle" id="audio-sheet-handle"></div>
+              
+              <!-- Header -->
+              <header class="bottom-sheet-header">
+                <button class="icon-btn" id="audio-sheet-close">
+                  <i data-lucide="chevron-down" size="24"></i>
+                </button>
+                <span class="sheet-title">Now Playing</span>
+                <button class="icon-btn" id="audio-sheet-analyzer-btn" title="Match Analyzer">
+                  <i data-lucide="cpu" size="20"></i>
+                </button>
+              </header>
+
+              <div class="audio-sheet-scrollable">
+                <!-- Large Album Art / Spinning Disc -->
+                <div class="large-cover-container">
+                  <div class="large-cover-glow" id="sheet-cover-glow"></div>
+                  <div class="large-cover-art" id="sheet-cover-art">
+                    <i data-lucide="disc" size="80" class="disc-icon"></i>
+                  </div>
+                </div>
+
+                <!-- Track Details -->
+                <div class="sheet-track-details">
+                  <div class="title-wrap">
+                    <h2 id="sheet-track-title">No Track Loaded</h2>
+                    <p id="sheet-track-artist">Select a profile track</p>
+                  </div>
+                  <div class="match-badge-wrap hidden" id="sheet-match-wrap">
+                    <span class="badge badge-match" id="sheet-match-badge">--% Match</span>
+                  </div>
+                </div>
+
+                <!-- Progress Slider -->
+                <div class="sheet-timeline-group">
+                  <div class="time-slider-wrapper" id="sheet-progress-container">
+                    <div class="time-slider-bg">
+                      <div class="time-slider-fill" id="sheet-progress-bar" style="width: 0%;"></div>
+                    </div>
+                  </div>
+                  <div class="time-text-row">
+                    <span id="sheet-time-elapsed">0:00</span>
+                    <span id="sheet-time-duration">0:00</span>
+                  </div>
+                </div>
+
+                <!-- Playback Controllers -->
+                <div class="sheet-playback-controls">
+                  <button class="control-btn icon-btn" id="sheet-btn-shuffle">
+                    <i data-lucide="shuffle" size="20"></i>
+                  </button>
+                  <button class="control-btn icon-btn" id="sheet-btn-prev">
+                    <i data-lucide="skip-back" size="24" fill="currentColor"></i>
+                  </button>
+                  <button class="control-btn play-pause-main" id="sheet-btn-play">
+                    <i data-lucide="play" size="32" fill="currentColor" id="sheet-play-icon"></i>
+                  </button>
+                  <button class="control-btn icon-btn" id="sheet-btn-next">
+                    <i data-lucide="skip-forward" size="24" fill="currentColor"></i>
+                  </button>
+                  <button class="control-btn icon-btn" id="sheet-btn-loop">
+                    <i data-lucide="repeat" size="20"></i>
+                  </button>
+                </div>
+
+                <!-- Audio Visualizer Canvas & Volume Control -->
+                <div class="sheet-volume-visualizer-row">
+                  <div class="visualizer-mini-wrap">
+                    <canvas id="sheet-mini-visualizer"></canvas>
+                  </div>
+                  
+                  <div class="sheet-volume-slider-group">
+                    <button class="icon-btn" id="sheet-btn-volume">
+                      <i data-lucide="volume-2" size="20"></i>
+                    </button>
+                    <div class="volume-slider-bar" id="sheet-volume-container">
+                      <div class="volume-slider-fill" id="sheet-volume-bar" style="width: 80%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MATCH ANALYZER BOTTOM SHEET -->
+          <div class="bottom-sheet-overlay" id="analyzer-sheet">
+            <div class="bottom-sheet-container">
+              <div class="bottom-sheet-handle" id="analyzer-sheet-handle"></div>
+              
+              <header class="bottom-sheet-header">
+                <button class="icon-btn" id="analyzer-sheet-close">
+                  <i data-lucide="chevron-down" size="24"></i>
+                </button>
+                <span class="sheet-title">Match Analysis</span>
+                <span class="dummy-box"></span>
+              </header>
+
+              <div class="analyzer-sheet-body">
+                <div class="match-score-radial">
+                  <svg class="progress-ring" width="100" height="100">
+                    <circle class="progress-ring-circle-bg" stroke="#222" stroke-width="8" fill="transparent" r="42" cx="50" cy="50"/>
+                    <circle class="progress-ring-circle" id="analyzer-match-ring" stroke="#00e5ff" stroke-width="8" fill="transparent" r="42" cx="50" cy="50"/>
+                  </svg>
+                  <div class="analyzer-score-val" id="analyzer-match-percentage">--%</div>
+                </div>
+                <h3 class="text-center mt-2" id="analyzer-partner-name">Checking Match...</h3>
+                <p class="section-desc text-center" id="analyzer-partner-headline">Matching metrics calculated against your music identity</p>
+
+                <div class="analyzer-breakdown-list mt-4">
+                  <!-- Match 1: Skills overlap -->
+                  <div class="analyzer-progress-item">
+                    <div class="progress-label-row">
+                      <span>Skills & Role Alignment</span>
+                      <span id="analyzer-val-skills">0%</span>
+                    </div>
+                    <div class="progress-track">
+                      <div class="progress-fill" id="analyzer-fill-skills" style="width: 0%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Match 2: Genre overlap -->
+                  <div class="analyzer-progress-item">
+                    <div class="progress-label-row">
+                      <span>Genre Symmetry</span>
+                      <span id="analyzer-val-genres">0%</span>
+                    </div>
+                    <div class="progress-track">
+                      <div class="progress-fill" id="analyzer-fill-genres" style="width: 0%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Match 3: Location / Style overlap -->
+                  <div class="analyzer-progress-item">
+                    <div class="progress-label-row">
+                      <span>Project Needs Balance</span>
+                      <span id="analyzer-val-needs">0%</span>
+                    </div>
+                    <div class="progress-track">
+                      <div class="progress-fill" id="analyzer-fill-needs" style="width: 0%;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="analyzer-explanation-card mt-4">
+                  <h5>Engine Breakdown</h5>
+                  <p id="analyzer-engine-text">Select a creator's card or play their audio track to parse collaboration synergy parameters in real-time.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MIX TIMELINE COMMENT SHEET -->
+          <div class="bottom-sheet-overlay" id="comment-add-sheet">
+            <div class="bottom-sheet-container">
+              <div class="bottom-sheet-handle"></div>
+              
+              <header class="bottom-sheet-header">
+                <button class="icon-btn" id="comment-sheet-close">
+                  <i data-lucide="x" size="24"></i>
+                </button>
+                <span class="sheet-title">Add Timeline Note</span>
+                <span class="dummy-box"></span>
+              </header>
+
+              <div class="comment-sheet-body">
+                <p class="section-desc">Create a feedback marker at timestamp <strong id="comment-sheet-time">0:00</strong>.</p>
+                <div class="form-group mt-3">
+                  <textarea id="comment-sheet-input" placeholder="Type comments about mix levels, vocals, chords..." rows="3"></textarea>
+                </div>
+                <button class="btn btn-primary btn-full mt-3" id="comment-sheet-submit-btn">Save Note Pin</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Toast Box -->
+          <div class="mob-toast-container" id="mob-toast-box"></div>
+
+        </div>
+        <!-- --- END MOBILE APPLICATION CORE --- -->
+        
+      </div>
+    </div>
+  </div>
+
+  <script src="mobile.js"></script>
+</body>
+</html>

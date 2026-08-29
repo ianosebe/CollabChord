@@ -1415,6 +1415,21 @@ function handleProfileEditSubmit(e) {
   
   showToast("Profile details saved! Industry match percentages recalculated.", "success");
 }
+// Append this routing action inside your core UI event listeners 
+function handleUserLogout() {
+  // 1. Flush volatile frontend credentials or tokens
+  state.currentUser = null;
+  localStorage.removeItem('collabchord_session_token');
+
+  // 2. Route the window directly out to the safe transition screen
+  window.location.href = 'logout.html';
+}
+
+// Event delegation targeting your existing sidebar/profile layout dropdowns
+document.getElementById('logout-action-btn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  handleUserLogout();
+});
 
 // Setup Checkboxes dynamically on Edit Profile tab
 function setupEditProfileForm() {
