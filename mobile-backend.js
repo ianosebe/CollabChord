@@ -1,6 +1,7 @@
 /* Live data integration for CollabChord's mobile layout. */
 (() => {
   const client=()=>window.ccSupabase, uid=()=>window.ccAuthUser?.id||null;
+  state.creators=[]; state.bulletins=[]; state.chats={}; state.activeProject=null;
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const say=(m)=>window.showToast?window.showToast(m):alert(m);
   const profiles=new Map(); let messages=[], comments=[], projects=[], activeProjectId=null, activeProjectOwnerId=null, stems=[];
