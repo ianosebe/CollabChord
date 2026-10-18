@@ -1433,6 +1433,7 @@ function handleUserLogout() {
   // 1. Flush volatile frontend credentials or tokens
   state.currentUser = null;
   localStorage.removeItem('collabchord_session_token');
+  localStorage.removeItem('cc_user_profile');
 
   // 2. Route the window directly out to the safe transition screen
   window.location.href = 'logout.html';
