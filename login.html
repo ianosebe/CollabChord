@@ -246,12 +246,25 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+  <script src="supabase-config.js"></script>
   <script>
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Simulate validation & redirecting back to main interface
-      window.location.href = 'index.html'; 
+
+    const supabase = window.supabase.createClient(window.CC_SUPABASE_URL, window.CC_SUPABASE_KEY);
+    const form = document.getElementById('login-form');
+    const button = form.querySelector('button[type="submit"]');
+    const message = document.createElement('p');
+    message.setAttribute('role','status'); message.style.cssText='color:#fca5a5;font-size:.9rem;margin:0 0 14px;';
+    form.prepend(message);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); message.textContent=''; button.disabled=true; button.textContent='Signing in…';
+      const {error} = await supabase.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});
+      if(error){message.textContent=error.message;button.disabled=false;button.textContent='Sign In';return;}
+      window.location.href='index.html';
     });
+    document.getElementById('spotify-login-btn').addEventListener('click',()=>{message.textContent='Spotify sign-in is not configured yet. Use email and password for now.';});
+    supabase.auth.getSession().then(({data})=>{if(data.session)window.location.href='index.html';});
+
   </script>
 </body>
 </html>
