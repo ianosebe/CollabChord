@@ -1404,7 +1404,7 @@ async function handleOnboardingSubmit(e) {
   showToast("Musical requirements matched! Feed populated.", "success");
 }
 
-async async function handleProfileEditSubmit(e) {
+async function handleProfileEditSubmit(e) {
   e.preventDefault();
   const name = document.getElementById('edit-name').value.trim();
   const skills = Array.from(document.querySelectorAll('#edit-skills-grid input:checked')).map(el => el.value);
