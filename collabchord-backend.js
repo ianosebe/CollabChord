@@ -23,7 +23,7 @@
       location:'', matchPct:typeof window.calculateMatch==='function' && state.currentUser ? calculateMatch(state.currentUser,p) : 0
     };
   }
-  function creatorById(id) { return state.creators.find(c=>c.id===id) || profileMap.get(id) || {id,name:'CollabChord member',avatar:'assets/logo.jpg',skills:[],genres:[],needs:[],bio:'',matchPct:0}; }
+  function creatorById(id) { return state.creators.find(c=>c.id===id) || profileMap.get(id) || {id,name:'CollabChord member',avatar:'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg',skills:[],genres:[],needs:[],bio:'',matchPct:0}; }
   function formatTime(v) { try { return new Date(v).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); } catch { return ''; } }
   function formatSeconds(v) { const n=Math.max(0,Number(v)||0); return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0'); }
 
@@ -76,7 +76,7 @@
     window.renderSidebarProjects();
     window.renderProjectChat();
     window.renderProjectComments();
-    window.renderStemFiles();
+    await loadStemFiles();
   }
   async function loadProjectMessages(projectId) {
     const {data,error}=await client().from('messages').select('id,sender_id,body,created_at').eq('project_id',projectId).order('created_at',{ascending:true}).limit(500);
@@ -165,7 +165,21 @@
   window.renderStemFiles = function(rows) {
     let c=document.getElementById('cc-stem-files');
     if(!c){c=document.createElement('section');c.id='cc-stem-files';c.className='card';c.style.cssText='padding:16px;margin:16px 0';document.getElementById('view-project')?.prepend(c);}
-    c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>Project audio stems</h3><p class="muted">Private files shared only with project members (max 50 MB per file).</p></div><button class="btn btn-primary btn-sm" id="cc-upload-stem" '+(!state.activeProject?'disabled':'')+'>Upload audio</button><input id="cc-stem-file" type="file" accept="audio/*" hidden></div>';
+    c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>Project audio stems</h3><p class="muted">Private files shared only with project members (max 50 MB per file).</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" id="cc-invite-member" '+(!state.activeProject?'disabled':'')+'>Invite collaborator</button><button class="btn btn-primary btn-sm" id="cc-upload-stem" '+(!state.activeProject?'disabled':'')+'>Upload audio</button></div><input id="cc-stem-file" type="file" accept="audio/*" hidden></div>';
+    const invite=c.querySelector('#cc-invite-member');
+    invite?.addEventListener('click',async()=>{
+      if(!activeProjectId)return;
+      const available=state.creators.filter(p=>p.id!==currentId());
+      if(!available.length)return notify('No other registered artists are available to invite yet.');
+      const selectedName=prompt('Enter the exact artist name to invite:\n'+available.map(p=>p.name).join('\n'));
+      if(!selectedName)return;
+      const target=available.find(p=>p.name.toLowerCase()===selectedName.trim().toLowerCase());
+      if(!target)return notify('Artist name not found. Copy a name from the list and try again.');
+      const {error}=await client().from('project_members').insert({project_id:activeProjectId,user_id:target.id,member_role:'collaborator'});
+      if(error)return notify(error.message,'info');
+      notify(target.name+' added to the project.','success');
+      await loadProjects();
+    });
     const b=c.querySelector('#cc-upload-stem'),input=c.querySelector('#cc-stem-file');
     b?.addEventListener('click',()=>input.click());
     input?.addEventListener('change',async()=>{const file=input.files?.[0];if(!file)return;if(!file.type.startsWith('audio/')){notify('Choose an audio file.');return;}if(file.size>50*1024*1024){notify('Audio file exceeds the 50 MB limit.');return;}const path=activeProjectId+'/'+currentId()+'/'+Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const {error:uploadError}=await client().storage.from('collabchord-stems').upload(path,file,{contentType:file.type,upsert:false});if(uploadError){notify(uploadError.message,'info');return;}const {error}=await client().from('stems').insert({project_id:activeProjectId,uploader_id:currentId(),title:file.name,storage_path:path});if(error){notify('Uploaded file but could not save its record: '+error.message,'info');return;}notify('Stem uploaded.','success');await loadStemFiles();});
