@@ -682,6 +682,16 @@
     </div>
   </div>
 
+  <!-- Supabase authentication gate -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    window.ccSupabase = window.supabase.createClient(window.CC_SUPABASE_URL, window.CC_SUPABASE_KEY);
+    window.ccSupabase.auth.getSession().then(({data}) => {
+      if (!data.session) window.location.replace('login.html');
+      else window.ccAuthUser = data.session.user;
+    });
+  </script>
   <!-- JavaScript file -->
   <script src="app.js"></script>
 </body>
