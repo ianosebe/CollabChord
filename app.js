@@ -1404,23 +1404,28 @@ async function handleOnboardingSubmit(e) {
   showToast("Musical requirements matched! Feed populated.", "success");
 }
 
-async function handleProfileEditSubmit(e) {
+async async function handleProfileEditSubmit(e) {
   e.preventDefault();
-  
-  const name = document.getElementById('edit-name').value;
+  const name = document.getElementById('edit-name').value.trim();
   const skills = Array.from(document.querySelectorAll('#edit-skills-grid input:checked')).map(el => el.value);
   const genres = Array.from(document.querySelectorAll('#edit-genres-grid input:checked')).map(el => el.value);
   const needs = Array.from(document.querySelectorAll('#edit-needs-grid input:checked')).map(el => el.value);
-  
+  if (!skills.length || !genres.length || !needs.length) {
+    showToast("Choose at least one skill, genre, and collaboration requirement.", "info");
+    return;
+  }
   state.currentUser = { name, skills, genres, needs };
   localStorage.setItem('cc_user_profile', JSON.stringify(state.currentUser));
-  
+  if (window.ccSupabase && window.ccAuthUser) {
+    const { error } = await window.ccSupabase.from('profiles').upsert({
+      id: window.ccAuthUser.id, display_name: name, skills, genres, looking_for: needs
+    });
+    if (error) showToast("Profile saved locally; cloud sync failed: " + error.message, "info");
+  }
   updateAllMatches();
-  
   renderMyProfile();
   renderTopMatches();
   if (state.activeTab === 'discover') renderDirectoryGrid();
-  
   showToast("Profile details saved! Industry match percentages recalculated.", "success");
 }
 // Append this routing action inside your core UI event listeners 
@@ -1474,7 +1479,9 @@ function setupEditProfileForm() {
 
 // --- Event Listeners and Initialisation ---
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.ccAuthReady) await window.ccAuthReady;
+  if (window.ccSupabase && !window.ccAuthUser) return;
   // Try loading profile from localstorage
   const stored = localStorage.getItem('cc_user_profile');
   if (stored) {
