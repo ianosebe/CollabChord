@@ -118,6 +118,8 @@
   <script>
 
     const supabase = window.supabase.createClient(window.CC_SUPABASE_URL, window.CC_SUPABASE_KEY);
+    localStorage.removeItem('cc_user_profile');
+    localStorage.removeItem('collabchord_session_token');
     supabase.auth.signOut().finally(()=>{setTimeout(()=>window.location.href='login.html',800);});
     document.querySelector('.redirect-notice').textContent='Signing you out securely…';
 
