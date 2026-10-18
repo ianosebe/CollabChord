@@ -1600,6 +1600,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.stem-volume').forEach(slider => {
     slider.addEventListener('input', (e) => {
       const stemName = e.target.id.replace('volume-', '');
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       state.activeProject.stems[stemName].volume = parseInt(e.target.value);
       audioEngine.updateStemMixerStates(state.activeProject.stems);
     });
@@ -1609,6 +1610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.mute-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const stemName = btn.id.replace('mute-', '');
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       const stateObj = state.activeProject.stems[stemName];
       stateObj.muted = !stateObj.muted;
       
@@ -1623,6 +1625,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.solo-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const stemName = btn.id.replace('solo-', '');
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       const stateObj = state.activeProject.stems[stemName];
       stateObj.solo = !stateObj.solo;
       
@@ -1635,6 +1638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Mixer play button handler
   document.getElementById('mixer-play-btn').addEventListener('click', () => {
+    if (!state.activeProject) { showToast('Create or select a project before starting the mixer.', 'info'); return; }
     state.isMixerPlaying = true;
     state.currentPlayingTrack = null;
     
