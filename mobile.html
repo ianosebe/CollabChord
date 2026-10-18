@@ -743,7 +743,7 @@
   <script src="supabase-config.js"></script>
   <script>
     window.ccSupabase = window.supabase.createClient(window.CC_SUPABASE_URL, window.CC_SUPABASE_KEY);
-    window.ccSupabase.auth.getSession().then(async ({data}) => {
+    window.ccAuthReady = window.ccSupabase.auth.getSession().then(async ({data}) => {
       if (!data.session) { window.location.replace('login.html'); return; }
       window.ccAuthUser = data.session.user;
       const {data:profile} = await window.ccSupabase.from('profiles').select('*').eq('id',data.session.user.id).maybeSingle();
@@ -751,5 +751,6 @@
     });
   </script>
   <script src="mobile.js"></script>
+  <script src="mobile-backend.js"></script>
 </body>
 </html>
