@@ -15,7 +15,7 @@ const state = {
     {
       id: 'marcus_keys',
       name: "Marcus 'Keys' Miller",
-      avatar: 'assets/producer.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/producer.jpg',
       skills: ['Producer', 'Keyboardist'],
       genres: ['Synthwave', 'Electronic', 'Hip-Hop'],
       bio: "Keyboardist and hardware synth collector. I produce high-energy synthwave, retro-cyberpunk tracks, and hip-hop beats. Looking for vocalists to write hook melodies and session guitarists.",
@@ -32,7 +32,7 @@ const state = {
     {
       id: 'elena_rostova',
       name: "Elena Rostova",
-      avatar: 'assets/vocalist.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/vocalist.jpg',
       skills: ['Vocalist', 'Songwriter'],
       genres: ['Pop', 'R&B', 'Lo-Fi'],
       bio: "Songwriter and indie vocalist. I specialize in airy vocals, rich stacks, and melodic hooks. I need a producer to help co-create my upcoming ambient pop EP.",
@@ -49,7 +49,7 @@ const state = {
     {
       id: 'dan_carter',
       name: "Dan Carter",
-      avatar: 'assets/guitarist.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/guitarist.jpg',
       skills: ['Guitarist', 'Audio Engineer'],
       genres: ['Rock', 'Cinematic', 'Electronic'],
       bio: "Guitarist and mix engineer. Heavy riffs, soaring solos, and clean mixes. Looking to collaborate on cinematic rock or electronic-rock hybrid projects.",
@@ -65,7 +65,7 @@ const state = {
     {
       id: 'chloe_vance',
       name: "Chloe Vance",
-      avatar: 'assets/logo.jpg', // Fallback avatar
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg', // Fallback avatar
       skills: ['Songwriter', 'Audio Engineer'],
       genres: ['Cinematic', 'Ambient', 'Rock'],
       bio: "Sound designer and soundscape composer. I design deep cinematic textures, reverbs, and slow-building instrumentals. Looking for vocalists and beatmakers.",
@@ -1841,23 +1841,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEditProfileForm();
   });
 
-  // Simulate stem upload
-  document.getElementById('stem-upload-sim').addEventListener('click', () => {
-    showToast("Stem file 'Guitar_Lead_Ref.wav' uploaded and synched to the cloud workspace!", "success");
-    
-    // Add activity record
-    const feed = document.querySelector('.activity-list');
-    const act = document.createElement('div');
-    act.className = 'activity-item';
-    act.innerHTML = `
-      <span class="activity-dot"></span>
-      <div class="activity-details">
-        <strong>You</strong> uploaded a new guitar lead stem to <em>Summer Chill Vibes</em>
-        <span class="activity-time">Just now</span>
-      </div>
-    `;
-    feed.insertBefore(act, feed.firstChild);
-  });
+  // Stem uploads are handled by collabchord-backend.js using private Supabase Storage.
 
   // Initialise Realtime Mini Visualizer loop
   setupRealTimeVisualizer();
@@ -1869,11 +1853,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }, 100);
 
-  // Trigger one unread message indicator after 8 seconds
-  setTimeout(() => {
-    document.getElementById('chat-notif-dot').classList.remove('hidden');
-    showToast("Marcus Miller sent you a stem update request in Messages!", "info");
-  }, 8000);
+  // Unread notifications are driven by actual messages, not simulated demo events.
 
   // Load standard icons
   lucide.createIcons();
