@@ -1386,7 +1386,8 @@ async function handleOnboardingSubmit(e) {
       display_name: name,
       skills, genres, looking_for: needs
     });
-    if (error) showToast('Profile saved locally; cloud sync failed: ' + error.message, 'info');
+    if (error) { showToast('Profile could not be saved: ' + error.message, 'info'); return; }
+    if (window.ccBackend) await window.ccBackend.refresh();
   }
   
   // Run match calculations
@@ -1420,7 +1421,8 @@ async function handleProfileEditSubmit(e) {
     const { error } = await window.ccSupabase.from('profiles').upsert({
       id: window.ccAuthUser.id, display_name: name, skills, genres, looking_for: needs
     });
-    if (error) showToast("Profile saved locally; cloud sync failed: " + error.message, "info");
+    if (error) { showToast("Profile could not be saved: " + error.message, "info"); return; }
+    if (window.ccBackend) await window.ccBackend.refresh();
   }
   updateAllMatches();
   renderMyProfile();
