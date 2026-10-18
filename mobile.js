@@ -15,7 +15,7 @@ const state = {
     {
       id: 'marcus_keys',
       name: "Marcus 'Keys' Miller",
-      avatar: 'assets/producer.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/producer.jpg',
       skills: ['Producer', 'Keyboardist'],
       genres: ['Synthwave', 'Electronic', 'Hip-Hop'],
       bio: "Keyboardist and hardware synth collector. I produce high-energy synthwave, retro-cyberpunk tracks, and hip-hop beats. Looking for vocalists to write hook melodies and session guitarists.",
@@ -32,7 +32,7 @@ const state = {
     {
       id: 'elena_rostova',
       name: "Elena Rostova",
-      avatar: 'assets/vocalist.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/vocalist.jpg',
       skills: ['Vocalist', 'Songwriter'],
       genres: ['Pop', 'R&B', 'Lo-Fi'],
       bio: "Songwriter and indie vocalist. I specialize in airy vocals, rich stacks, and melodic hooks. I need a producer to help co-create my upcoming ambient pop EP.",
@@ -49,7 +49,7 @@ const state = {
     {
       id: 'dan_carter',
       name: "Dan Carter",
-      avatar: 'assets/guitarist.jpg',
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/guitarist.jpg',
       skills: ['Guitarist', 'Audio Engineer'],
       genres: ['Rock', 'Cinematic', 'Electronic'],
       bio: "Guitarist and mix engineer. Heavy riffs, soaring solos, and clean mixes. Looking to collaborate on cinematic rock or electronic-rock hybrid projects.",
@@ -65,7 +65,7 @@ const state = {
     {
       id: 'chloe_vance',
       name: "Chloe Vance",
-      avatar: 'assets/logo.jpg', // Fallback
+      avatar: 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg', // Fallback
       skills: ['Songwriter', 'Audio Engineer'],
       genres: ['Cinematic', 'Ambient', 'Rock'],
       bio: "Sound designer and soundscape composer. I design deep cinematic textures, reverbs, and slow-building instrumentals. Looking for vocalists and beatmakers.",
