@@ -1521,6 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 13. Project Mixer play trigger
   document.getElementById('mob-mixer-play-btn').addEventListener('click', () => {
+    if (!state.activeProject) { showToast('Create or select a project before starting the mixer.'); return; }
     if (audioEngine.isPlaying) {
       audioEngine.stopPlaying();
       state.isPlaying = false;
@@ -1561,6 +1562,7 @@ document.addEventListener('DOMContentLoaded', () => {
       label.textContent = `${v}%`;
       
       // Update state
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       state.activeProject.stems[stemName].volume = v;
       audioEngine.updateStemMixerStates(state.activeProject.stems);
     });
@@ -1568,6 +1570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mute buttons
     const muteBtn = document.getElementById(`mob-mute-${stemName}`);
     muteBtn.addEventListener('click', () => {
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       const isMuted = !state.activeProject.stems[stemName].muted;
       state.activeProject.stems[stemName].muted = isMuted;
       
@@ -1580,6 +1583,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Solo buttons
     const soloBtn = document.getElementById(`mob-solo-${stemName}`);
     soloBtn.addEventListener('click', () => {
+      if (!state.activeProject || !state.activeProject.stems[stemName]) return;
       const isSolo = !state.activeProject.stems[stemName].solo;
       state.activeProject.stems[stemName].solo = isSolo;
       
@@ -1597,6 +1601,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Waveform timeline scrubber clicks inside Project view
   const projectWaveform = document.getElementById('mob-project-waveform');
   projectWaveform.addEventListener('click', (e) => {
+    if (!state.activeProject) { showToast('Create or select a project first.'); return; }
     const rect = projectWaveform.getBoundingClientRect();
     const pct = ((e.clientX - rect.left) / rect.width) * 100;
     
@@ -1615,6 +1620,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Slide up comment creation bottom sheet
   document.getElementById('mob-add-comment-trigger').addEventListener('click', () => {
+    if (!state.activeProject) { showToast('Create or select a project first.'); return; }
     const sheet = document.getElementById('comment-add-sheet');
     const pct = audioEngine.waveformTimelinePosition;
     
