@@ -250,7 +250,7 @@
       const password=document.getElementById('password').value, confirmPassword=document.getElementById('confirm-password').value;
       if(password!==confirmPassword){message.textContent='Passwords do not match.';return;}
       button.disabled=true;button.textContent='Creating account…';
-      const {data,error}=await supabase.auth.signUp({email:document.getElementById('email').value.trim(),password,options:{data:{display_name:document.getElementById('name').value.trim()}}});
+      const {data,error}=await supabase.auth.signUp({email:document.getElementById('email').value.trim(),password,options:{data:{display_name:document.getElementById('name').value.trim()},emailRedirectTo:window.location.origin+'/index.html'}});
       if(error){message.textContent=error.message;button.disabled=false;button.textContent='Create Account';return;}
       if(data.user && data.session){
         await supabase.from('profiles').upsert({id:data.user.id,display_name:document.getElementById('name').value.trim()});
