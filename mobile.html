@@ -22,7 +22,7 @@
   <div class="presentation-wrapper">
     <div class="presentation-sidebar">
       <div class="brand-header">
-        <img src="assets/logo.jpg" alt="CollabChord Logo" class="brand-logo">
+        <img src="https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg" alt="CollabChord Logo" class="brand-logo">
         <h2>CollabChord Mobile</h2>
         <span class="version-badge">v1.2 Premium</span>
       </div>
@@ -96,7 +96,7 @@
               <div class="onboarding-slide active" data-slide="0">
                 <div class="slide-illustration">
                   <div class="pulse-ring"></div>
-                  <img src="assets/logo.jpg" alt="Logo" class="slide-logo">
+                  <img src="https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg" alt="Logo" class="slide-logo">
                 </div>
                 <h2>CollabChord Mobile</h2>
                 <p>Welcome to the ultimate hub for matching, pitching, and collaborating with music creators.</p>
@@ -739,6 +739,17 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    window.ccSupabase = window.supabase.createClient(window.CC_SUPABASE_URL, window.CC_SUPABASE_KEY);
+    window.ccSupabase.auth.getSession().then(async ({data}) => {
+      if (!data.session) { window.location.replace('login.html'); return; }
+      window.ccAuthUser = data.session.user;
+      const {data:profile} = await window.ccSupabase.from('profiles').select('*').eq('id',data.session.user.id).maybeSingle();
+      if (profile) localStorage.setItem('cc_user_profile',JSON.stringify({name:profile.display_name,skills:profile.skills||[],genres:profile.genres||[],needs:profile.looking_for||[]}));
+    });
+  </script>
   <script src="mobile.js"></script>
 </body>
 </html>
