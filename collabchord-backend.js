@@ -18,7 +18,7 @@
 
   function mapProfile(p) {
     return {
-      id:p.id, name:p.display_name || 'Artist', avatar:p.avatar_url || 'assets/logo.jpg',
+      id:p.id, name:p.display_name || 'Artist', avatar:p.avatar_url || 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg',
       skills:Array.isArray(p.skills)?p.skills:[], genres:Array.isArray(p.genres)?p.genres:[],
       needs:Array.isArray(p.looking_for)?p.looking_for:[], bio:p.bio || 'Artist on CollabChord.',
       influence:'CollabChord member', tracks:[], workingStyle:'Remote', commitment:'Open to collaboration',
