@@ -3,6 +3,7 @@
 (() => {
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const client = () => window.ccSupabase;
+  state.creators=[]; state.bulletins=[]; state.chats={}; state.activeProject=null;
   const currentId = () => window.ccAuthUser?.id || null;
   const notify = (message, type='info') => typeof window.showToast === 'function' ? window.showToast(message, type) : alert(message);
   const profileMap = new Map();
@@ -154,15 +155,16 @@
   };
   window.renderProjectChat = function() {
     const c=document.getElementById('project-chat-messages');if(!c)return;c.innerHTML='';
-    if(!state.activeProject){c.innerHTML='<p class="analyzer-placeholder">Create a project or select one from your sidebar to start collaborating.</p>';return;}
+    if(!state.activeProject){c.innerHTML='<p class="analyzer-placeholder">Create a project or select one from your sidebar to start collaborating.</p>';document.querySelectorAll('.comment-pin').forEach(pin=>pin.remove());return;}
     if(!projectMessages.length){c.innerHTML='<p class="analyzer-placeholder">No project messages yet. Start the conversation below.</p>';return;}
     projectMessages.forEach(m=>{const own=m.sender_id===currentId(),bubble=document.createElement('div');bubble.className='chat-bubble '+(own?'sender':'recipient');bubble.innerHTML='<span class="chat-bubble-sender-name">'+esc(own?(state.currentUser?.name||'You'):(creatorById(m.sender_id).name))+'</span><span>'+esc(m.body)+'</span><span class="chat-bubble-time">'+esc(formatTime(m.created_at))+'</span>';c.append(bubble);});c.scrollTop=c.scrollHeight;
   };
   window.renderProjectComments = function() {
     const c=document.getElementById('waveform-comments-list');if(!c)return;c.innerHTML='';
     if(!state.activeProject){c.innerHTML='<p class="analyzer-placeholder">Timeline notes will appear when a project is selected.</p>';return;}
+    document.querySelectorAll('.comment-pin').forEach(pin=>pin.remove());
     if(!projectComments.length){c.innerHTML='<p class="analyzer-placeholder">No timeline notes yet.</p>';return;}
-    projectComments.forEach(n=>{const item=document.createElement('div');item.className='comment-card';item.innerHTML='<span class="comment-time">'+esc(formatSeconds(n.time_seconds))+'</span><span class="comment-body"><strong>'+esc(creatorById(n.author_id).name)+':</strong> '+esc(n.body)+'</span>';c.append(item);});
+    projectComments.forEach(n=>{const item=document.createElement('div');item.className='comment-card';item.innerHTML='<span class="comment-time">'+esc(formatSeconds(n.time_seconds))+'</span><span class="comment-body"><strong>'+esc(creatorById(n.author_id).name)+':</strong> '+esc(n.body)+'</span>';c.append(item);const pin=document.createElement('div');pin.className='comment-pin';pin.style.left=Math.min(100,(n.time_seconds/180)*100)+'%';pin.dataset.time=formatSeconds(n.time_seconds);pin.dataset.comment=n.body;document.querySelector('.timeline-visualizer-container')?.append(pin);});
   };
   window.renderStemFiles = function(rows) {
     let c=document.getElementById('cc-stem-files');
