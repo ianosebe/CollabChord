@@ -747,7 +747,7 @@
       if (!data.session) { window.location.replace('login.html'); return; }
       window.ccAuthUser = data.session.user;
       const {data:profile} = await window.ccSupabase.from('profiles').select('*').eq('id',data.session.user.id).maybeSingle();
-      if (profile) localStorage.setItem('cc_user_profile',JSON.stringify({name:profile.display_name,skills:profile.skills||[],genres:profile.genres||[],needs:profile.looking_for||[]}));
+      if (profile && profile.skills?.length && profile.genres?.length && profile.looking_for?.length) localStorage.setItem('cc_user_profile',JSON.stringify({name:profile.display_name,skills:profile.skills||[],genres:profile.genres||[],needs:profile.looking_for||[]})); else localStorage.removeItem('cc_user_profile');
     });
   </script>
   <script src="mobile.js"></script>
