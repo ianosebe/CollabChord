@@ -1363,7 +1363,7 @@ function togglePlayback() {
 }
 
 // Handle Form setups
-function handleOnboardingSubmit(e) {
+async function handleOnboardingSubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('user-name').value;
@@ -1380,6 +1380,14 @@ function handleOnboardingSubmit(e) {
   
   state.currentUser = { name, skills, genres, needs };
   localStorage.setItem('cc_user_profile', JSON.stringify(state.currentUser));
+  if (window.ccSupabase && window.ccAuthUser) {
+    const { error } = await window.ccSupabase.from('profiles').upsert({
+      id: window.ccAuthUser.id,
+      display_name: name,
+      skills, genres, looking_for: needs
+    });
+    if (error) showToast('Profile saved locally; cloud sync failed: ' + error.message, 'info');
+  }
   
   // Run match calculations
   updateAllMatches();
@@ -1396,7 +1404,7 @@ function handleOnboardingSubmit(e) {
   showToast("Musical requirements matched! Feed populated.", "success");
 }
 
-function handleProfileEditSubmit(e) {
+async function handleProfileEditSubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('edit-name').value;
