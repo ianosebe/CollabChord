@@ -12,6 +12,7 @@
   let projects = [];
   let bulletins = [];
   let activeProjectId = null;
+  let activeProjectOwnerId = null;
   let refreshBusy = false;
 
   function mapProfile(p) {
@@ -64,6 +65,7 @@
     projects=data||[];
     if(!projects.some(p=>p.id===activeProjectId)) activeProjectId=projects[0]?.id||null;
     const selected=projects.find(p=>p.id===activeProjectId);
+    activeProjectOwnerId=selected?.owner_id||null;
     if(selected) {
       const {data:members}=await client().from('project_members').select('user_id,member_role').eq('project_id',selected.id);
       const other=(members||[]).find(m=>m.user_id!==uid);
@@ -168,7 +170,7 @@
     c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>Project audio stems</h3><p class="muted">Private files shared only with project members (max 50 MB per file).</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" id="cc-invite-member" '+(!state.activeProject?'disabled':'')+'>Invite collaborator</button><button class="btn btn-primary btn-sm" id="cc-upload-stem" '+(!state.activeProject?'disabled':'')+'>Upload audio</button></div><input id="cc-stem-file" type="file" accept="audio/*" hidden></div>';
     const invite=c.querySelector('#cc-invite-member');
     invite?.addEventListener('click',async()=>{
-      if(!activeProjectId)return;
+      if(!activeProjectId||activeProjectOwnerId!==currentId())return notify('Only the project owner can invite collaborators.');
       const available=state.creators.filter(p=>p.id!==currentId());
       if(!available.length)return notify('No other registered artists are available to invite yet.');
       const selectedName=prompt('Enter the exact artist name to invite:\n'+available.map(p=>p.name).join('\n'));
