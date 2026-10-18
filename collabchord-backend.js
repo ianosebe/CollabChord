@@ -18,7 +18,7 @@
 
   function mapProfile(p) {
     return {
-      id:p.id, name:p.display_name || 'Artist', avatar:p.avatar_url || 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg',
+      id:p.id, name:p.display_name || 'Artist', avatar:(/^https:\/\//i.test(p.avatar_url||'') ? p.avatar_url : 'https://raw.githubusercontent.com/ianosebe/CollabChord/master/assets/logo.jpg'),
       skills:Array.isArray(p.skills)?p.skills:[], genres:Array.isArray(p.genres)?p.genres:[],
       needs:Array.isArray(p.looking_for)?p.looking_for:[], bio:p.bio || 'Artist on CollabChord.',
       influence:'CollabChord member', tracks:[], workingStyle:'Remote', commitment:'Open to collaboration',
@@ -109,6 +109,29 @@
     finally { refreshBusy=false; }
   }
 
+  window.renderTopMatches = function() {
+    const grid=document.getElementById('top-matches-grid');if(!grid)return;grid.innerHTML='';
+    if(!state.creators.length){grid.innerHTML='<p class="analyzer-placeholder">Other artist profiles will appear here when musicians join CollabChord.</p>';return;}
+    state.creators.slice().sort((a,b)=>(b.matchPct||0)-(a.matchPct||0)).slice(0,3).forEach(p=>{const card=document.createElement('article');card.className='card creator-card';card.innerHTML='<div class="creator-card-avatar-wrap"><img src="'+esc(p.avatar)+'" alt="" class="creator-card-avatar"><span class="creator-match-badge">'+(p.matchPct||0)+'% Match</span></div><h3 class="creator-name">'+esc(p.name)+'</h3><div class="creator-roles">'+p.skills.map(x=>'<span class="skill-tag">'+esc(x)+'</span>').join('')+p.genres.slice(0,2).map(x=>'<span class="skill-tag genre-tag">'+esc(x)+'</span>').join('')+'</div><p class="creator-reqs">Looking for: '+esc(p.needs.join(', '))+'</p><button class="btn btn-secondary btn-sm btn-full">View details</button>';card.querySelector('button').addEventListener('click',()=>window.openArtistModal(p.id));grid.append(card);});
+  };
+  window.renderDirectoryGrid = function() {
+    const container=document.getElementById('creators-directory-grid');if(!container)return;container.innerHTML='';
+    const roleVal=document.getElementById('filter-role')?.value||'all',genreVal=document.getElementById('filter-genre')?.value||'all',minMatch=parseInt(document.getElementById('filter-match')?.value||'0',10);
+    const filtered=state.creators.filter(p=>(roleVal==='all'||p.skills.includes(roleVal))&&(genreVal==='all'||p.genres.includes(genreVal))&&(p.matchPct||0)>=minMatch);
+    if(!filtered.length){container.innerHTML='<div class="no-selection flex-column flex-center" style="grid-column:1/-1;padding:40px 0"><h3>No registered artists match these filters yet.</h3><p>Try changing filters or invite musicians to join CollabChord.</p></div>';return;}
+    filtered.forEach(p=>{const card=document.createElement('article');card.className='card directory-card';card.innerHTML='<div class="directory-card-header"><img src="'+esc(p.avatar)+'" alt="" class="directory-card-avatar"><div class="directory-meta"><h3 class="directory-name">'+esc(p.name)+'</h3><span class="directory-badge-match">'+(p.matchPct||0)+'% Collab Match</span></div></div><div class="directory-body"><p class="directory-bio">'+esc(p.bio)+'</p><div class="directory-tags-section"><div><span class="tags-label">Skills:</span><div class="tags-row">'+p.skills.map(x=>'<span class="skill-tag">'+esc(x)+'</span>').join('')+'</div></div><div><span class="tags-label">Looking for:</span><div class="tags-row">'+p.needs.map(x=>'<span class="skill-tag genre-tag">'+esc(x)+'</span>').join('')+'</div></div></div></div><div class="directory-footer-actions"><button class="btn btn-secondary" data-view>View profile</button><button class="btn btn-primary" data-message>Message</button></div>';card.querySelector('[data-view]').addEventListener('click',()=>window.openArtistModal(p.id));card.querySelector('[data-message]').addEventListener('click',()=>window.pitchToCreator(p.id));container.append(card);});
+  };
+  window.openArtistModal = function(id) {
+    const p=creatorById(id);if(!p||p.id===currentId())return;
+    const set=(key,value)=>{const el=document.getElementById(key);if(el)el.textContent=value;};
+    const avatar=document.getElementById('modal-avatar');if(avatar)avatar.src=p.avatar;
+    set('modal-name',p.name);set('modal-bio',p.bio);set('modal-roles',p.skills.join(' · '));set('modal-genres',p.genres.join(' · '));set('modal-requirements','Looking for: '+p.needs.join(', '));
+    set('modal-match-text',(p.matchPct||0)+'%');
+    const tracks=document.getElementById('modal-tracks-list');if(tracks)tracks.innerHTML='<p class="analyzer-placeholder">No audio preview has been published by this artist yet.</p>';
+    const pitch=document.getElementById('modal-pitch-btn');if(pitch)pitch.onclick=()=>{window.closeArtistModal();window.pitchToCreator(p.id);};
+    const jam=document.getElementById('modal-jam-btn');if(jam)jam.onclick=()=>{window.closeArtistModal();window.createCollabProject();};
+    document.getElementById('artist-modal')?.classList.add('active');
+  };
   window.renderBulletins = function() {
     const container=document.getElementById('bulletin-postings'); if(!container) return;
     container.innerHTML='<div class="section-header" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center"><h3>Open collaboration listings</h3><button class="btn btn-primary btn-sm" id="cc-create-bulletin">Post a listing</button></div>';
